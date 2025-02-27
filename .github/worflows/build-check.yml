@@ -1,0 +1,25 @@
+name: Verify Build on Main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'  # Change selon ton projet
+
+      - name: Install dependencies
+        run: npm install  # Ou yarn install / pnpm install
+
+      - name: Build application
+        run: npm run build  # Change selon ton projet
