@@ -2,6 +2,7 @@ import { Controller, Body, Param, Put, Delete, UseGuards, Request, ParseIntPipe 
 import { UsersService } from './users.service';
 import { UpdateUserDto } from '../auth/dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AdminGuard } from '../auth/admin.guard';
 
 @Controller('users')
 export class UsersController {
@@ -17,12 +18,16 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto, req.user.id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AdminGuard)
   @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number, @Request() req) {
-    // Vérifier si l'utilisateur est admin
-    const isAdmin = req.user.role === 'admin';
-    return this.usersService.remove(id, req.user.id, isAdmin);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.remove(id, id, true);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('profile')
+  async deleteOwnAccount(@Request() req) {
+    return this.usersService.remove(req.user.id, req.user.id, false);
   }
 
   @UseGuards(JwtAuthGuard)
