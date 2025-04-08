@@ -1,13 +1,14 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InfluxDB, Point } from '@influxdata/influxdb-client';
 import { ConfigService } from '@nestjs/config';
-import { BucketsAPI } from '@influxdata/influxdb-client-apis';
+import { BucketsAPI, HealthAPI } from '@influxdata/influxdb-client-apis';
 
 @Injectable()
 export class InfluxService implements OnModuleInit {
   private readonly logger = new Logger(InfluxService.name);
   private influxDB: InfluxDB;
   private bucketsApi: BucketsAPI;
+  private healthApi: HealthAPI;
   private readonly orgId: string;
   private readonly token: string;
   private readonly url: string;
@@ -17,19 +18,37 @@ export class InfluxService implements OnModuleInit {
     this.token = this.configService.get<string>('INFLUXDB_TOKEN');
     this.orgId = this.configService.get<string>('INFLUXDB_ORG');
 
+    if (!this.url) {
+      this.logger.error('INFLUXDB_URL is not defined in environment variables');
+      throw new Error('INFLUXDB_URL is required');
+    }
+
+    if (!this.token) {
+      this.logger.error('INFLUXDB_TOKEN is not defined in environment variables');
+      throw new Error('INFLUXDB_TOKEN is required');
+    }
+
+    if (!this.orgId) {
+      this.logger.error('INFLUXDB_ORG is not defined in environment variables');
+      throw new Error('INFLUXDB_ORG is required');
+    }
+
+    this.logger.log(`Initializing InfluxDB client with URL: ${this.url}`);
+    
     this.influxDB = new InfluxDB({
       url: this.url,
       token: this.token,
     });
 
     this.bucketsApi = new BucketsAPI(this.influxDB);
+    this.healthApi = new HealthAPI(this.influxDB);
   }
 
   async onModuleInit() {
     try {
       this.logger.log('Initializing InfluxDB service...');
       // Vérifier la connexion à InfluxDB
-      const health = await this.influxDB.health();
+      const health = await this.healthApi.getHealth();
       this.logger.log(`InfluxDB connection status: ${health.status}`);
     } catch (error) {
       this.logger.error(`Failed to connect to InfluxDB: ${error.message}`);

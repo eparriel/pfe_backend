@@ -5,7 +5,11 @@ import { InfluxClientService } from './influx-client.service';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [ConfigModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+  ],
   controllers: [InfluxController],
   providers: [InfluxService, InfluxClientService],
   exports: [InfluxService, InfluxClientService],
