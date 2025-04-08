@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InfluxDB, Point } from '@influxdata/influxdb-client';
 import { ConfigService } from '@nestjs/config';
-import { BucketsAPI, HealthAPI } from '@influxdata/influxdb-client-apis';
+import { BucketsAPI, HealthAPI, OrgsAPI } from '@influxdata/influxdb-client-apis';
 
 @Injectable()
 export class InfluxService implements OnModuleInit {
@@ -9,6 +9,7 @@ export class InfluxService implements OnModuleInit {
   private influxDB: InfluxDB;
   private bucketsApi: BucketsAPI;
   private healthApi: HealthAPI;
+  private orgsApi: OrgsAPI;
   private readonly orgId: string;
   private readonly token: string;
   private readonly url: string;
@@ -35,23 +36,48 @@ export class InfluxService implements OnModuleInit {
 
     this.logger.log(`Initializing InfluxDB client with URL: ${this.url}`);
     
-    this.influxDB = new InfluxDB({
-      url: this.url,
-      token: this.token,
-    });
+    try {
+      this.influxDB = new InfluxDB({
+        url: this.url,
+        token: this.token,
+      });
 
-    this.bucketsApi = new BucketsAPI(this.influxDB);
-    this.healthApi = new HealthAPI(this.influxDB);
+      this.bucketsApi = new BucketsAPI(this.influxDB);
+      this.healthApi = new HealthAPI(this.influxDB);
+      this.orgsApi = new OrgsAPI(this.influxDB);
+      
+      this.logger.log('InfluxDB client initialized successfully');
+    } catch (error) {
+      this.logger.error('Failed to initialize InfluxDB client:', error);
+      throw error;
+    }
   }
 
   async onModuleInit() {
     try {
       this.logger.log('Initializing InfluxDB service...');
+      
       // Vérifier la connexion à InfluxDB
+      this.logger.log('Checking InfluxDB health...');
       const health = await this.healthApi.getHealth();
-      this.logger.log(`InfluxDB connection status: ${health.status}`);
+      this.logger.log(`InfluxDB health status: ${health.status}`);
+      
+      // Vérifier l'existence de l'organisation
+      this.logger.log(`Checking organization: ${this.orgId}`);
+      const orgs = await this.orgsApi.getOrgs({ org: this.orgId });
+      
+      if (orgs.orgs.length === 0) {
+        throw new Error(`Organization '${this.orgId}' not found`);
+      }
+      
+      this.logger.log(`Found organization: ${orgs.orgs[0].name} (${orgs.orgs[0].id})`);
+      
     } catch (error) {
       this.logger.error(`Failed to connect to InfluxDB: ${error.message}`);
+      if (error.message.includes('unauthorized')) {
+        this.logger.error('Invalid token or insufficient permissions');
+      }
+      throw error;
     }
   }
 
