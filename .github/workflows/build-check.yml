@@ -59,21 +59,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build Docker image
-        run: |
-          echo "Building Docker image..."
-          docker build -t pfe-backend:latest .
-          echo "Docker image built successfully!"
+        run: docker-compose build
 
-      - name: Test Docker container
+      - name: Test Docker Compose stack
         run: |
-          echo "Testing Docker container..."
-          docker run --rm -d --name test-container -p 3000:3000 pfe-backend:latest
-          sleep 10
-          docker ps
-          docker logs test-container || true
-          curl --fail http://localhost:3000 || (docker logs test-container && exit 1)
-          docker stop test-container || true
-          echo "Docker container test completed!"
+          docker-compose up -d
+          sleep 20
+          curl --fail http://localhost:3000 || (docker-compose logs app && exit 1)
+          docker-compose down
 
       - name: Show Docker info
         run: |
