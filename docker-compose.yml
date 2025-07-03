@@ -1,6 +1,26 @@
 version: '3.8'
 
 services:
+  app:
+    build: .
+    container_name: pfe_backend_app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/pfe_db
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_TOKEN=adminpassword
+      - INFLUXDB_ORG=pfe_org
+    depends_on:
+      - postgres
+      - rabbitmq
+      - influxdb
+    networks:
+      - app_network
+    restart: unless-stopped
+
   postgres:
     image: postgres:15
     container_name: postgres

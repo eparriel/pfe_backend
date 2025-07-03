@@ -47,18 +47,37 @@ jobs:
         run: npm run test
         continue-on-error: true
 
-  # Job de déploiement optionnel - à adapter selon vos besoins
-  # deploy:
-  #   needs: build-test
-  #   runs-on: ubuntu-latest
-  #   name: Deploy
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3
-  #
-  #     - name: Deploy application
-  #       run: |
-  #         echo "Deploying application..."
-  #         # Ajoutez ici vos commandes de déploiement
-  #       env:
-  #         DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+  docker-deploy:
+    needs: build-test
+    runs-on: ubuntu-latest
+    name: Docker Build & Deploy
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: |
+          echo "Building Docker image..."
+          docker build -t pfe-backend:latest .
+          echo "Docker image built successfully!"
+
+      - name: Test Docker container
+        run: |
+          echo "Testing Docker container..."
+          docker run --rm -d --name test-container pfe-backend:latest
+          sleep 10
+          docker ps
+          docker stop test-container
+          echo "Docker container test completed!"
+
+      - name: Show Docker info
+        run: |
+          echo "=== Docker image info ==="
+          docker images pfe-backend
+          echo "=== Docker container test ==="
+          docker run --rm pfe-backend:latest node --version
+          echo "=== Application build successful ==="
+
