@@ -19,7 +19,7 @@ export class UsersService {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    const { password, ...result } = user;
+    const { password: _password, ...result } = user;
     return result;
   }
 
@@ -58,7 +58,7 @@ export class UsersService {
       include: { role: true },
     });
 
-    const { password, ...result } = updatedUser;
+    const { password: _password, ...result } = updatedUser;
     return result;
   }
 

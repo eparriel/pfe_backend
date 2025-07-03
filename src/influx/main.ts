@@ -28,7 +28,7 @@ async function bootstrap() {
   }
   
   // Configurer le microservice
-  const microservice = app.connectMicroservice<MicroserviceOptions>({
+  app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
       urls: [rabbitMqUrl],

@@ -27,7 +27,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const { password: _, ...result } = user;
+    const { password: _password, ...result } = user;
     return result;
   }
 
@@ -95,7 +95,7 @@ export class AuthService {
       },
     });
 
-    const { password, ...result } = user;
+    const { password: _password, ...result } = user;
 
     // Générer le token JWT
     const payload = { 
