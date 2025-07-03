@@ -4,7 +4,7 @@ name: CI/CD Build & Test
 
 on:
   push:
-    branches: [main]
+    branches: [main, feature/pipeline]
   pull_request:
 
 jobs:
