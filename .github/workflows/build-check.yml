@@ -4,7 +4,7 @@ name: CI/CD Build & Test
 
 on:
   push:
-    branches: [main, feature/pipeline]
+    branches: [main]
   pull_request:
 
 jobs:
@@ -93,7 +93,6 @@ jobs:
         run: |
           docker build -t ghcr.io/${{ github.repository_owner }}/pfe-backend:latest .
           docker push ghcr.io/${{ github.repository_owner }}/pfe-backend:latest
-
   # deploy-to-azure:
   #   needs: docker-push
   #   runs-on: ubuntu-latest
