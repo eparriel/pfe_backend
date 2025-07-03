@@ -67,10 +67,12 @@ jobs:
       - name: Test Docker container
         run: |
           echo "Testing Docker container..."
-          docker run --rm -d --name test-container pfe-backend:latest
+          docker run --rm -d --name test-container -p 3000:3000 pfe-backend:latest
           sleep 10
           docker ps
-          docker stop test-container
+          docker logs test-container || true
+          curl --fail http://localhost:3000 || (docker logs test-container && exit 1)
+          docker stop test-container || true
           echo "Docker container test completed!"
 
       - name: Show Docker info
