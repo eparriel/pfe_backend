@@ -23,3 +23,65 @@ jobs:
 
       - name: Build application
         run: npm run build  # Change selon ton projet
+# .github/workflows/ci-cd.yml
+
+name: CI/CD Microservices
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [api-gateway, auth-service, influx-service, user-service]
+    name: Build & Test ${{ matrix.service }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install root dependencies
+        run: npm install
+
+      - name: Install service dependencies
+        run: |
+          cd packages/${{ matrix.service }}
+          npm install
+
+      - name: Run tests
+        run: |
+          cd packages/${{ matrix.service }}
+          npm run test
+
+      - name: Build service
+        run: |
+          cd packages/${{ matrix.service }}
+          npm run build
+
+  deploy:
+    needs: build-test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [api-gateway, auth-service, influx-service, user-service]
+    name: Deploy ${{ matrix.service }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy ${{ matrix.service }}
+        run: |
+          echo "Deploying ${{ matrix.service }}..."
+          # Remplace par ton vrai script ou commande
+          cd packages/${{ matrix.service }}
+          npm run deploy
+        env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
