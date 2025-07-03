@@ -4,7 +4,7 @@ name: CI/CD Build & Test
 
 on:
   push:
-    branches: [main, feature/pipeline]
+    branches: [main, feature/pipeline, feature/deploiement_azure]
   pull_request:
 
 jobs:
@@ -93,4 +93,34 @@ jobs:
         run: |
           docker build -t ghcr.io/${{ github.repository_owner }}/pfe-backend:latest .
           docker push ghcr.io/${{ github.repository_owner }}/pfe-backend:latest
+
+  deploy-to-azure:
+    needs: docker-push
+    runs-on: ubuntu-latest
+    name: Deploy to Azure VM
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Copy files to Azure VM
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.AZURE_VM_HOST }}
+          username: ${{ secrets.AZURE_VM_USERNAME }}
+          key: ${{ secrets.AZURE_VM_SSH_KEY }}
+          source: "docker-compose.prod.yml,scripts/deploy-azure.sh"
+          target: "/opt/pfe-backend"
+
+      - name: Deploy to Azure VM
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.AZURE_VM_HOST }}
+          username: ${{ secrets.AZURE_VM_USERNAME }}
+          key: ${{ secrets.AZURE_VM_SSH_KEY }}
+          script: |
+            cd /opt/pfe-backend
+            chmod +x scripts/deploy-azure.sh
+            export GITHUB_REPOSITORY_OWNER=${{ github.repository_owner }}
+            ./scripts/deploy-azure.sh
 
