@@ -68,11 +68,3 @@ jobs:
           curl --fail http://localhost:3000 || (docker compose logs app && exit 1)
           docker compose down
 
-      - name: Show Docker info
-        run: |
-          echo "=== Docker image info ==="
-          docker images pfe-backend
-          echo "=== Docker container test ==="
-          docker run --rm pfe-backend:latest node --version
-          echo "=== Application build successful ==="
-
