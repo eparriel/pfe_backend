@@ -19,6 +19,7 @@ export class UsersService {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _password, ...result } = user;
     return result;
   }
@@ -58,6 +59,7 @@ export class UsersService {
       include: { role: true },
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _password, ...result } = updatedUser;
     return result;
   }
