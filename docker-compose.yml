@@ -5,14 +5,15 @@ services:
     build: .
     container_name: pfe_backend_app
     ports:
-      - "3000:3000"
+      - "${PORT:-3000}:3000"
     environment:
-      - NODE_ENV=production
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/pfe_db
-      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
-      - INFLUXDB_URL=http://influxdb:8086
-      - INFLUXDB_TOKEN=adminpassword
-      - INFLUXDB_ORG=pfe_org
+      - NODE_ENV=${NODE_ENV:-development}
+      - DATABASE_URL=${DATABASE_URL}
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - INFLUXDB_URL=${INFLUXDB_URL}
+      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
+      - INFLUXDB_ORG=${INFLUXDB_ORG}
+      - JWT_SECRET=${JWT_SECRET}
     depends_on:
       - postgres
       - rabbitmq
@@ -20,27 +21,31 @@ services:
     networks:
       - app_network
     restart: unless-stopped
+    env_file:
+      - .env
 
   postgres:
     image: postgres:15
     container_name: postgres
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: pfe_db
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-pfe_db}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - app_network
+    env_file:
+      - .env
 
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
     ports:
       - "5672:5672"  # AMQP protocol port
       - "15672:15672"  # Management interface port
@@ -48,22 +53,26 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
       - app_network
+    env_file:
+      - .env
 
   influxdb:
     image: influxdb:2.7
     container_name: influxdb
     environment:
       DOCKER_INFLUXDB_INIT_MODE: setup
-      DOCKER_INFLUXDB_INIT_USERNAME: admin
-      DOCKER_INFLUXDB_INIT_PASSWORD: adminpassword
-      DOCKER_INFLUXDB_INIT_ORG: pfe_org
-      DOCKER_INFLUXDB_INIT_BUCKET: pfe_bucket
+      DOCKER_INFLUXDB_INIT_USERNAME: ${INFLUXDB_USERNAME:-admin}
+      DOCKER_INFLUXDB_INIT_PASSWORD: ${INFLUXDB_PASSWORD:-adminpassword}
+      DOCKER_INFLUXDB_INIT_ORG: ${INFLUXDB_ORG:-pfe_org}
+      DOCKER_INFLUXDB_INIT_BUCKET: ${INFLUXDB_BUCKET:-pfe_bucket}
     ports:
       - "8086:8086"
     volumes:
       - influxdb_data:/var/lib/influxdb2
     networks:
       - app_network
+    env_file:
+      - .env
 
 volumes:
   postgres_data:

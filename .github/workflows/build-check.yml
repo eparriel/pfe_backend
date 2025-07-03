@@ -94,3 +94,68 @@ jobs:
           docker build -t ghcr.io/${{ github.repository_owner }}/pfe-backend:latest .
           docker push ghcr.io/${{ github.repository_owner }}/pfe-backend:latest
 
+  # deploy-to-azure:
+  #   needs: docker-push
+  #   runs-on: ubuntu-latest
+  #   name: Deploy to Azure VM
+  #   if: github.ref == 'refs/heads/main'
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+
+  #     - name: Create .env file for production
+  #       run: |
+  #         cat > .env << EOF
+  #         NODE_ENV=production
+  #         PORT=3000
+          
+  #         # Base de données PostgreSQL
+  #         DATABASE_URL=postgresql://postgres:postgres@postgres:5432/pfe_db
+  #         POSTGRES_USER=postgres
+  #         POSTGRES_PASSWORD=postgres
+  #         POSTGRES_DB=pfe_db
+          
+  #         # RabbitMQ
+  #         RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+  #         RABBITMQ_USER=guest
+  #         RABBITMQ_PASSWORD=guest
+          
+  #         # InfluxDB
+  #         INFLUXDB_URL=http://influxdb:8086
+  #         INFLUXDB_TOKEN=adminpassword
+  #         INFLUXDB_ORG=pfe_org
+  #         INFLUXDB_BUCKET=pfe_bucket
+  #         INFLUXDB_USERNAME=admin
+  #         INFLUXDB_PASSWORD=adminpassword
+          
+  #         # JWT Secret (généré automatiquement)
+  #         JWT_SECRET=${{ secrets.JWT_SECRET }}
+          
+  #         # GitHub Container Registry
+  #         GITHUB_REPOSITORY_OWNER=${{ github.repository_owner }}
+  #         EOF
+
+      # - name: Copy files to Azure VM
+      #   uses: appleboy/scp-action@v0.1.7
+      #   with:
+      #     host: ${{ secrets.AZURE_VM_HOST }}
+      #     username: ${{ secrets.AZURE_VM_USERNAME }}
+      #     key: ${{ secrets.AZURE_VM_SSH_KEY }}
+      #     source: "docker-compose.prod.yml,.env"
+      #     target: "/opt/pfe-backend"
+
+      # - name: Deploy to Azure VM
+      #   uses: appleboy/ssh-action@v1.0.0
+      #   with:
+      #     host: ${{ secrets.AZURE_VM_HOST }}
+      #     username: ${{ secrets.AZURE_VM_USERNAME }}
+      #     key: ${{ secrets.AZURE_VM_SSH_KEY }}
+      #     script: |
+      #       cd /opt/pfe-backend
+      #       docker-compose -f docker-compose.prod.yml down
+      #       docker pull ghcr.io/${{ github.repository_owner }}/pfe-backend:latest
+      #       docker-compose -f docker-compose.prod.yml up -d
+      #       sleep 30
+      #       curl -f http://localhost:3000 || (docker-compose -f docker-compose.prod.yml logs app && exit 1)
+      #       echo "Deployment completed successfully!"
+
