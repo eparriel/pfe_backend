@@ -25,7 +25,11 @@ docker-compose ps
 
 # Tester l'application
 echo "🧪 Test de l'application..."
-curl -f http://localhost:3000 || echo "⚠️  L'application n'est pas encore prête"
+if curl -f http://localhost:3000; then
+    echo "✅ Application déployée avec succès!"
+else
+    echo "⚠️  L'application n'est pas encore prête"
+fi
 
 echo "✅ Déploiement terminé!"
 echo "🌐 Application disponible sur: http://localhost:3000"
