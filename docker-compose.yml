@@ -7,12 +7,13 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/pfe_db
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
       - INFLUXDB_URL=http://influxdb:8086
       - INFLUXDB_TOKEN=adminpassword
       - INFLUXDB_ORG=pfe_org
+      - JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
     depends_on:
       - postgres
       - rabbitmq
