@@ -13,7 +13,7 @@ export class AuthController {
   @Post('connect')
   @HttpCode(HttpStatus.OK)
   @UseGuards(ThrottlerGuard)
-  @Throttle(5, 300) // 5 tentatives de connexion par 5 minutes
+  @Throttle({ default: { limit: 5, ttl: 300000 } }) // 5 tentatives de connexion par 5 minutes
   @ApiOperation({ summary: 'Connexion utilisateur', description: 'Authentification avec email et mot de passe' })
   @ApiBody({ type: LoginDto })
   @ApiResponse({ 
@@ -44,7 +44,7 @@ export class AuthController {
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(ThrottlerGuard)
-  @Throttle(3, 600) // 3 tentatives d'inscription par 10 minutes
+  @Throttle({ default: { limit: 3, ttl: 600000 } }) // 3 tentatives d'inscription par 10 minutes
   @ApiOperation({ summary: 'Inscription utilisateur', description: 'Création d\'un nouveau compte utilisateur' })
   @ApiBody({ type: RegisterDto })
   @ApiResponse({ 
