@@ -83,9 +83,24 @@
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "**/*.(t|j)s"
+      "**/*.(t|j)s",
+      "!**/*.dto.ts",
+      "!**/*.module.ts",
+      "!**/main.ts"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": ["<rootDir>/test/setup.ts"],
+    "setupFiles": ["<rootDir>/test/silence-logs.ts"],
+    "silent": true,
+    "verbose": false,
+    "coverageThreshold": {
+      "global": {
+        "branches": 55,
+        "functions": 75,
+        "lines": 67,
+        "statements": 67
+      }
+    }
   }
 }

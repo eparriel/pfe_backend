@@ -18,4 +18,4 @@ import { JwtStrategy } from './jwt.strategy';
   providers: [AuthService, PrismaService, JwtStrategy],
   exports: [AuthService],
 })
-export class AuthModule {} 
+export class AuthModule {}

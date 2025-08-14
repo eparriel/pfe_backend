@@ -9,9 +9,11 @@ export class AdminGuard extends JwtAuthGuard {
     }
 
     if (user.role !== 'admin') {
-      throw new ForbiddenException('Only administrators can access this resource');
+      throw new ForbiddenException(
+        'Only administrators can access this resource',
+      );
     }
 
     return user;
   }
-} 
+}

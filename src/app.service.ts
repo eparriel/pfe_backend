@@ -28,14 +28,14 @@ export class AppService {
       details: {
         memory: this.getMemoryUsage(),
         cpu: process.cpuUsage(),
-      }
+      },
     };
 
     // Vérifier la base de données PostgreSQL
     try {
       await this.prisma.$queryRaw`SELECT 1`;
       health.services.database = 'healthy';
-    } catch (error) {
+    } catch {
       health.services.database = 'unhealthy';
       health.status = 'degraded';
     }
@@ -45,13 +45,16 @@ export class AppService {
       // Utiliser la méthode de santé d'InfluxDB si disponible
       // Pour l'instant, on considère InfluxDB comme healthy si le service est initialisé
       health.services.influxdb = 'healthy';
-    } catch (error) {
+    } catch {
       health.services.influxdb = 'unhealthy';
       health.status = 'degraded';
     }
 
     // Déterminer le statut global
-    if (health.services.database === 'unhealthy' && health.services.influxdb === 'unhealthy') {
+    if (
+      health.services.database === 'unhealthy' &&
+      health.services.influxdb === 'unhealthy'
+    ) {
       health.status = 'unhealthy';
     }
 
