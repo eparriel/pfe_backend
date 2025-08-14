@@ -1,5 +1,17 @@
-import { Controller, Get, UseGuards, Request, HttpStatus, HttpCode } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  UseGuards,
+  Request,
+  HttpStatus,
+  HttpCode,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { AppService } from './app.service';
 
@@ -17,9 +29,9 @@ export class AppController {
 
   @Get('health')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Healthcheck complet de l\'API' })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiOperation({ summary: "Healthcheck complet de l'API" })
+  @ApiResponse({
+    status: 200,
     description: 'API en bonne santé',
     schema: {
       type: 'object',
@@ -34,11 +46,11 @@ export class AppController {
           properties: {
             api: { type: 'string', example: 'healthy' },
             database: { type: 'string', example: 'healthy' },
-            influxdb: { type: 'string', example: 'healthy' }
-          }
-        }
-      }
-    }
+            influxdb: { type: 'string', example: 'healthy' },
+          },
+        },
+      },
+    },
   })
   @ApiResponse({ status: 503, description: 'API en mauvaise santé' })
   async getHealth() {
@@ -53,14 +65,14 @@ export class AppController {
     return {
       status: 'ok',
       message: 'pong',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
   @Get('profile')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ summary: 'Profil de l\'utilisateur connecté' })
+  @ApiOperation({ summary: "Profil de l'utilisateur connecté" })
   @ApiResponse({ status: 200, description: 'Profil récupéré avec succès' })
   @ApiResponse({ status: 401, description: 'Non autorisé' })
   getProfile(@Request() req) {

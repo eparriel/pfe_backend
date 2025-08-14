@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserDto } from '../auth/dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
@@ -24,7 +28,11 @@ export class UsersService {
     return result;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto, currentUserId: number) {
+  async update(
+    id: number,
+    updateUserDto: UpdateUserDto,
+    currentUserId: number,
+  ) {
     const user = await this.prisma.user.findUnique({
       where: { id },
       include: { role: true },
@@ -75,7 +83,9 @@ export class UsersService {
 
     // Vérifier si l'utilisateur supprime son propre compte ou s'il est admin
     if (id !== currentUserId && !isAdmin) {
-      throw new ForbiddenException('You can only delete your own account unless you are an admin');
+      throw new ForbiddenException(
+        'You can only delete your own account unless you are an admin',
+      );
     }
 
     await this.prisma.user.delete({
@@ -84,4 +94,4 @@ export class UsersService {
 
     return { message: 'User deleted successfully' };
   }
-} 
+}

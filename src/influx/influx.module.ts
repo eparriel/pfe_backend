@@ -14,4 +14,4 @@ import { ConfigModule } from '@nestjs/config';
   providers: [InfluxService, InfluxClientService],
   exports: [InfluxService, InfluxClientService],
 })
-export class InfluxModule {} 
+export class InfluxModule {}
