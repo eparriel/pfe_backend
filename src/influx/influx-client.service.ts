@@ -1,5 +1,9 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { ClientProxy, ClientProxyFactory, Transport } from '@nestjs/microservices';
+import {
+  ClientProxy,
+  ClientProxyFactory,
+  Transport,
+} from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 
@@ -26,17 +30,21 @@ export class InfluxClientService implements OnModuleInit {
       await this.client.connect();
       this.logger.log('Connected to InfluxDB microservice');
     } catch (error) {
-      this.logger.error(`Failed to connect to InfluxDB microservice: ${error.message}`);
+      this.logger.error(
+        `Failed to connect to InfluxDB microservice: ${error.message}`,
+      );
     }
   }
 
   async createBucketForVivarium(vivariumId: number): Promise<boolean> {
     try {
       return await firstValueFrom(
-        this.client.send('influx.create_bucket', vivariumId)
+        this.client.send('influx.create_bucket', vivariumId),
       );
     } catch (error) {
-      this.logger.error(`Failed to create bucket for vivarium ${vivariumId}: ${error.message}`);
+      this.logger.error(
+        `Failed to create bucket for vivarium ${vivariumId}: ${error.message}`,
+      );
       throw error;
     }
   }
@@ -49,21 +57,38 @@ export class InfluxClientService implements OnModuleInit {
   ): Promise<void> {
     try {
       await firstValueFrom(
-        this.client.send('influx.insert_data', { vivariumId, measurement, value, tags })
+        this.client.send('influx.insert_data', {
+          vivariumId,
+          measurement,
+          value,
+          tags,
+        }),
       );
     } catch (error) {
-      this.logger.error(`Failed to insert data for vivarium ${vivariumId}: ${error.message}`);
+      this.logger.error(
+        `Failed to insert data for vivarium ${vivariumId}: ${error.message}`,
+      );
       throw error;
     }
   }
 
-  async getLatestData(vivariumId: number, measurement: string, timeRange: number = 24) {
+  async getLatestData(
+    vivariumId: number,
+    measurement: string,
+    timeRange: number = 24,
+  ) {
     try {
       return await firstValueFrom(
-        this.client.send('influx.get_data', { vivariumId, measurement, timeRange })
+        this.client.send('influx.get_data', {
+          vivariumId,
+          measurement,
+          timeRange,
+        }),
       );
     } catch (error) {
-      this.logger.error(`Failed to get data for vivarium ${vivariumId}: ${error.message}`);
+      this.logger.error(
+        `Failed to get data for vivarium ${vivariumId}: ${error.message}`,
+      );
       throw error;
     }
   }
@@ -71,11 +96,13 @@ export class InfluxClientService implements OnModuleInit {
   async deleteBucketForVivarium(vivariumId: number): Promise<void> {
     try {
       await firstValueFrom(
-        this.client.send('influx.delete_bucket', vivariumId)
+        this.client.send('influx.delete_bucket', vivariumId),
       );
     } catch (error) {
-      this.logger.error(`Failed to delete bucket for vivarium ${vivariumId}: ${error.message}`);
+      this.logger.error(
+        `Failed to delete bucket for vivarium ${vivariumId}: ${error.message}`,
+      );
       throw error;
     }
   }
-} 
+}

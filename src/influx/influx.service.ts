@@ -24,7 +24,9 @@ export class InfluxService implements OnModuleInit {
     }
 
     if (!this.token) {
-      this.logger.error('INFLUXDB_TOKEN is not defined in environment variables');
+      this.logger.error(
+        'INFLUXDB_TOKEN is not defined in environment variables',
+      );
       throw new Error('INFLUXDB_TOKEN is required');
     }
 
@@ -34,7 +36,7 @@ export class InfluxService implements OnModuleInit {
     }
 
     this.logger.log(`Initializing InfluxDB client with URL: ${this.url}`);
-    
+
     this.influxDB = new InfluxDB({
       url: this.url,
       token: this.token,
@@ -63,7 +65,7 @@ export class InfluxService implements OnModuleInit {
   async createBucketForVivarium(vivariumId: number): Promise<boolean> {
     try {
       const bucketName = `vivarium_${vivariumId}`;
-      
+
       // Vérifier si le bucket existe déjà
       const buckets = await this.bucketsApi.getBuckets({
         org: this.orgId,
@@ -89,10 +91,14 @@ export class InfluxService implements OnModuleInit {
         },
       });
 
-      this.logger.log(`Created bucket ${bucketName} for vivarium ${vivariumId}`);
+      this.logger.log(
+        `Created bucket ${bucketName} for vivarium ${vivariumId}`,
+      );
       return true;
     } catch (error) {
-      this.logger.error(`Failed to create bucket for vivarium ${vivariumId}: ${error.message}`);
+      this.logger.error(
+        `Failed to create bucket for vivarium ${vivariumId}: ${error.message}`,
+      );
       throw error;
     }
   }
@@ -113,11 +119,11 @@ export class InfluxService implements OnModuleInit {
     try {
       const bucketName = `vivarium_${vivariumId}`;
       const writeApi = this.influxDB.getWriteApi(this.orgId, bucketName, 'ns');
-      
+
       const point = new Point(measurement)
         .floatField('value', value)
         .timestamp(new Date());
-      
+
       // Ajouter les tags
       Object.entries(tags).forEach(([key, value]) => {
         point.tag(key, value);
@@ -125,13 +131,17 @@ export class InfluxService implements OnModuleInit {
 
       // Ajouter le tag vivariumId
       point.tag('vivariumId', vivariumId.toString());
-      
+
       writeApi.writePoint(point);
       await writeApi.close();
-      
-      this.logger.log(`Inserted data for vivarium ${vivariumId}: ${measurement} = ${value}`);
+
+      this.logger.log(
+        `Inserted data for vivarium ${vivariumId}: ${measurement} = ${value}`,
+      );
     } catch (error) {
-      this.logger.error(`Failed to insert data for vivarium ${vivariumId}: ${error.message}`);
+      this.logger.error(
+        `Failed to insert data for vivarium ${vivariumId}: ${error.message}`,
+      );
       throw error;
     }
   }
@@ -142,11 +152,15 @@ export class InfluxService implements OnModuleInit {
    * @param measurement - Type de mesure (température, humidité, etc.)
    * @param timeRange - Plage de temps en heures (default: 24)
    */
-  async getLatestData(vivariumId: number, measurement: string, timeRange: number = 24) {
+  async getLatestData(
+    vivariumId: number,
+    measurement: string,
+    timeRange: number = 24,
+  ) {
     try {
       const bucketName = `vivarium_${vivariumId}`;
       const queryApi = this.influxDB.getQueryApi(this.orgId);
-      
+
       const query = `
         from(bucket: "${bucketName}")
           |> range(start: -${timeRange}h)
@@ -154,11 +168,13 @@ export class InfluxService implements OnModuleInit {
           |> filter(fn: (r) => r.vivariumId == "${vivariumId}")
           |> yield()
       `;
-      
+
       const result = await queryApi.collectRows(query);
       return result;
     } catch (error) {
-      this.logger.error(`Failed to get data for vivarium ${vivariumId}: ${error.message}`);
+      this.logger.error(
+        `Failed to get data for vivarium ${vivariumId}: ${error.message}`,
+      );
       throw error;
     }
   }
@@ -170,7 +186,7 @@ export class InfluxService implements OnModuleInit {
   async deleteBucketForVivarium(vivariumId: number): Promise<void> {
     try {
       const bucketName = `vivarium_${vivariumId}`;
-      
+
       // Trouver l'ID du bucket
       const buckets = await this.bucketsApi.getBuckets({
         org: this.orgId,
@@ -183,14 +199,18 @@ export class InfluxService implements OnModuleInit {
       }
 
       const bucketId = buckets.buckets[0].id;
-      
+
       // Supprimer le bucket
       await this.bucketsApi.deleteBucketsID({ bucketID: bucketId });
-      
-      this.logger.log(`Deleted bucket ${bucketName} for vivarium ${vivariumId}`);
+
+      this.logger.log(
+        `Deleted bucket ${bucketName} for vivarium ${vivariumId}`,
+      );
     } catch (error) {
-      this.logger.error(`Failed to delete bucket for vivarium ${vivariumId}: ${error.message}`);
+      this.logger.error(
+        `Failed to delete bucket for vivarium ${vivariumId}: ${error.message}`,
+      );
       throw error;
     }
   }
-} 
+}

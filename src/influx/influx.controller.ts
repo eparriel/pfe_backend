@@ -53,4 +53,4 @@ export class InfluxController {
     this.logger.log(`Deleting bucket for vivarium: ${vivariumId}`);
     return this.influxService.deleteBucketForVivarium(vivariumId);
   }
-} 
+}
