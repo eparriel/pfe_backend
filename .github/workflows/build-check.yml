@@ -94,6 +94,16 @@ jobs:
           docker build -t ghcr.io/${{ github.repository_owner }}/pfe-backend:latest .
           docker push ghcr.io/${{ github.repository_owner }}/pfe-backend:latest
           
+  # 🚨 DÉPLOIEMENT AZURE DÉSACTIVÉ
+  # Ce job est actuellement désactivé car il nécessite une configuration Azure spécifique
+  # Pour l'activer, vous devez :
+  # 1. Configurer une VM Azure avec Docker
+  # 2. Ajouter les secrets GitHub (AZURE_VM_HOST, AZURE_VM_USERNAME, AZURE_VM_SSH_KEY)
+  # 3. Configurer JWT_SECRET
+  # 4. Décommenter ce job et configurer les variables d'environnement
+  #
+  # Voir GITHUB_SECRETS_SETUP.md pour la configuration complète
+  #
   # deploy-to-azure:
   #   needs: docker-push
   #   runs-on: ubuntu-latest

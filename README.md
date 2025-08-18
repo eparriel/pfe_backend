@@ -1,99 +1,233 @@
+# 🚀 PFE Backend - Architecture Microservices
+
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <img src="https://nestjs.com/img/logo-small.svg" width="120" alt="NestJS Logo" />
+  <br/>
+  <strong>Backend Microservices pour Projet de Fin d'Études</strong>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 📋 Description
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Ce projet est un backend microservices développé avec NestJS, intégrant plusieurs technologies pour la gestion de données temps réel et la communication asynchrone.
 
-## Description
+### 🏗️ Architecture
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **API Gateway** : Point d'entrée principal avec authentification JWT
+- **Auth Service** : Gestion des utilisateurs et authentification
+- **User Service** : Gestion des profils utilisateurs
+- **Influx Service** : Gestion des données InfluxDB pour les métriques temps réel
+- **Shared Package** : Interfaces et DTOs partagés entre services
 
-## Project setup
+### 🛠️ Technologies
 
+- **Framework** : NestJS 10.x
+- **Base de données** : PostgreSQL 15 avec Prisma ORM
+- **Message Broker** : RabbitMQ 3.x
+- **Base de données temps réel** : InfluxDB 2.7
+- **Containerisation** : Docker & Docker Compose
+- **CI/CD** : GitHub Actions
+- **Sécurité** : JWT, Helmet, Throttler
+
+## 🚀 Installation et démarrage
+
+### Prérequis
+- Node.js 18+
+- Docker & Docker Compose
+- npm ou yarn
+
+### Installation
 ```bash
-$ npm install
+# Cloner le repository
+git clone <repository-url>
+cd pfe_backend
+
+# Installer les dépendances
+npm install --legacy-peer-deps
+
+# Copier la configuration d'environnement
+cp config.env.example .env
+# Éditer .env avec vos valeurs
 ```
 
-## Compile and run the project
-
+### Démarrage rapide avec Docker
 ```bash
-# development
-$ npm run start
+# Démarrer tous les services
+./deploy.sh
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# Ou manuellement
+docker-compose up -d --build
 ```
 
-## Run tests
-
+### Démarrage en développement
 ```bash
-# unit tests
-$ npm run test
+# Base de données et services
+docker-compose up -d postgres rabbitmq influxdb
 
-# e2e tests
-$ npm run test:e2e
+# Application en mode développement
+npm run start:dev
 
-# test coverage
-$ npm run test:cov
+# Service InfluxDB séparé
+npm run start:influx
 ```
 
-## Deployment
+## 🔧 Configuration
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+### Variables d'environnement
 ```bash
-$ npm install -g mau
-$ mau deploy
+# Base de données
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/pfe_db
+
+# RabbitMQ
+RABBITMQ_URL=amqp://guest:guest@localhost:5672
+
+# InfluxDB
+INFLUXDB_URL=http://localhost:8086
+INFLUXDB_TOKEN=adminpassword
+INFLUXDB_ORG=pfe_org
+INFLUXDB_BUCKET=pfe_bucket
+
+# JWT
+JWT_SECRET=your-secure-jwt-secret
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Ports par défaut
+- **3000** : Application principale
+- **5432** : PostgreSQL
+- **5672** : RabbitMQ AMQP
+- **15672** : RabbitMQ Management UI
+- **8086** : InfluxDB
 
-## Resources
+## 🧪 Tests
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+# Tests unitaires
+npm run test
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+# Tests en mode watch
+npm run test:watch
 
-## Support
+# Couverture de code
+npm run test:cov
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+# Tests e2e
+npm run test:e2e
 
-## Stay in touch
+# Linting
+npm run lint
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## 📦 Structure du projet
 
-## License
+```
+pfe_backend/
+├── packages/
+│   ├── api-gateway/     # Point d'entrée principal
+│   ├── auth-service/    # Service d'authentification
+│   ├── user-service/    # Service utilisateurs
+│   ├── influx-service/  # Service InfluxDB
+│   └── shared/          # Code partagé
+├── src/                 # Code principal
+├── prisma/              # Schéma et migrations DB
+└── docker-compose.yml   # Services Docker
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## 🐳 Déploiement
+
+### Déploiement local
+```bash
+# Script automatique
+./deploy.sh
+
+# Manuel
+docker-compose up -d --build
+```
+
+### Déploiement production
+```bash
+# Construire l'image
+docker build -t pfe-backend:latest .
+
+# Démarrer avec docker-compose.prod.yml
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+### CI/CD
+Le projet utilise GitHub Actions pour :
+- ✅ Tests automatiques
+- ✅ Build Docker
+- ✅ Publication sur GitHub Container Registry
+- ✅ Déploiement automatisé (configurable)
+
+## 🔐 Sécurité
+
+- **JWT** pour l'authentification
+- **Helmet** pour les en-têtes de sécurité
+- **Throttler** pour la limitation de débit
+- **CORS** configuré
+- **Validation** des données avec class-validator
+
+## 📊 Monitoring
+
+### Interfaces d'administration
+- **RabbitMQ Management** : http://localhost:15672 (guest/guest)
+- **InfluxDB** : http://localhost:8086 (admin/adminpassword)
+
+### Logs
+```bash
+# Logs de l'application
+docker-compose logs app
+
+# Logs en temps réel
+docker-compose logs -f
+```
+
+## 🚨 Dépannage
+
+### Problèmes courants
+1. **Ports déjà utilisés** : Vérifiez les ports 3000, 5432, 5672, 15672, 8086
+2. **Permissions Docker** : Assurez-vous d'avoir les droits Docker
+3. **Mémoire insuffisante** : Augmentez la RAM allouée à Docker
+
+### Commandes utiles
+```bash
+# Vérifier l'état des services
+docker-compose ps
+
+# Redémarrer un service
+docker-compose restart app
+
+# Nettoyer l'espace
+docker system prune -a
+```
+
+## 📚 Documentation
+
+- [Guide de déploiement Docker](DOCKER_DEPLOYMENT.md)
+- [Architecture des packages](ARCHITECTURE.md)
+- [Documentation des APIs](API_DOCUMENTATION.md)
+- [Configuration des secrets GitHub](GITHUB_SECRETS_SETUP.md)
+- [Guide de sécurité](THROTTLER_SECURITY.md)
+- [Guide de test](TESTING.md)
+
+## 🤝 Contribution
+
+1. Fork le projet
+2. Créez une branche feature (`git checkout -b feature/AmazingFeature`)
+3. Committez vos changements (`git commit -m 'Add some AmazingFeature'`)
+4. Push vers la branche (`git push origin feature/AmazingFeature`)
+5. Ouvrez une Pull Request
+
+## 📄 Licence
+
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+
+## 📞 Support
+
+Pour toute question ou problème :
+- Ouvrez une issue sur GitHub
+- Consultez la documentation dans le dossier `docs/`
+- Vérifiez les logs Docker pour le débogage
+
+---
+
+**Développé avec ❤️ pour le PFE** 🎓
