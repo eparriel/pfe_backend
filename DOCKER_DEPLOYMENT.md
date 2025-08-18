@@ -37,6 +37,8 @@ L'application utilise ces variables d'environnement :
 - `INFLUXDB_TOKEN`: InfluxDB token
 - `INFLUXDB_ORG`: InfluxDB organization
 
+**📝 Voir `config.env.example` pour la configuration complète**
+
 ### Ports exposés
 - **3000**: Application NestJS
 - **5432**: PostgreSQL
@@ -110,6 +112,8 @@ Le workflow GitHub Actions (`build-check.yml`) inclut :
 2. **Docker Build**: Construction de l'image Docker
 3. **Container Test**: Test du conteneur
 
+**📝 Note**: Le déploiement Azure est actuellement désactivé. Voir `GITHUB_SECRETS_SETUP.md` pour l'activer.
+
 ## 🎯 Pour l'évaluation
 
 Ce déploiement Docker démontre :
@@ -137,4 +141,28 @@ docker system prune -a
 
 # Vérifier les réseaux
 docker network ls
-``` 
+```
+
+## 📚 Documentation liée
+
+- [README.md](README.md) - Vue d'ensemble du projet
+- [ARCHITECTURE.md](ARCHITECTURE.md) - Architecture des packages
+- [GITHUB_SECRETS_SETUP.md](GITHUB_SECRETS_SETUP.md) - Configuration CI/CD
+- [THROTTLER_SECURITY.md](THROTTLER_SECURITY.md) - Sécurité et limitation de débit
+- [TESTING.md](TESTING.md) - Guide des tests
+
+## 🔮 Évolutions futures
+
+### Déploiement microservices
+- Séparation des services en conteneurs individuels
+- Communication via RabbitMQ
+- Scaling indépendant des services
+
+### Monitoring avancé
+- Prometheus + Grafana
+- Logs centralisés (ELK Stack)
+- Alertes automatiques
+
+---
+
+**Pour toute question sur le déploiement, consultez la documentation ou ouvrez une issue.** 🚀 
