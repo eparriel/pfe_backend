@@ -6,6 +6,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { InfluxModule } from './influx/influx.module';
+import { VivariumModule } from './vivarium/vivarium.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 
@@ -28,6 +29,7 @@ import { APP_GUARD } from '@nestjs/core';
     AuthModule,
     UsersModule,
     InfluxModule,
+    VivariumModule,
   ],
   controllers: [AppController],
   providers: [

@@ -24,7 +24,8 @@ model User {
   updatedAt DateTime @updatedAt
   role      Role     @relation(fields: [roleId], references: [id])
   roleId    Int      @default(1)
-  vivariums  Vivarium[]
+  vivariums Vivarium[]
+  commands  Command[]
 }
 
 model Role {
@@ -42,6 +43,11 @@ model Vivarium {
   userId      Int
   user        User       @relation(fields: [userId], references: [id])
   createdAt   DateTime   @default(now())
+  sensors     Sensor[]
+  commands    Command[]
+  deviceId    String?    @unique // ID unique de l'ESP32
+  isOnline    Boolean    @default(false)
+  lastSeen    DateTime?
 }
 
 model measurement {
@@ -49,5 +55,67 @@ model measurement {
   vivariumId Int
   bucketUuid String
   createdAt DateTime @default(now())
+}
+
+model Sensor {
+  id          Int      @id @default(autoincrement())
+  name        String
+  type        SensorType
+  unit        String?
+  minValue    Float?
+  maxValue    Float?
+  vivariumId  Int
+  vivarium    Vivarium @relation(fields: [vivariumId], references: [id], onDelete: Cascade)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Command {
+  id          Int           @id @default(autoincrement())
+  type        CommandType
+  payload     Json          // Données spécifiques à la commande
+  status      CommandStatus @default(PENDING)
+  vivariumId  Int
+  vivarium    Vivarium      @relation(fields: [vivariumId], references: [id], onDelete: Cascade)
+  userId      Int
+  user        User          @relation(fields: [userId], references: [id])
+  createdAt   DateTime      @default(now())
+  executedAt  DateTime?
+  errorMessage String?
+}
+
+enum SensorType {
+  TEMPERATURE
+  HUMIDITY
+  LIGHT
+  WATER_LEVEL
+  PH_LEVEL
+  CO2_LEVEL
+  MOTION
+  PRESSURE
+  CUSTOM
+}
+
+enum CommandType {
+  PUMP_ON
+  PUMP_OFF
+  LIGHT_ON
+  LIGHT_OFF
+  HEATER_ON
+  HEATER_OFF
+  FAN_ON
+  FAN_OFF
+  FEEDING
+  WATER_CHANGE
+  CUSTOM
+}
+
+enum CommandStatus {
+  PENDING
+  SENT
+  EXECUTED
+  FAILED
+  CANCELLED
 }
 

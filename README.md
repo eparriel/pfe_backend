@@ -8,25 +8,28 @@
 
 ## 📋 Description
 
-Ce projet est un backend microservices développé avec NestJS, intégrant plusieurs technologies pour la gestion de données temps réel et la communication asynchrone.
+Ce projet est un backend microservices développé avec NestJS pour la gestion de vivariums connectés. Il permet de recevoir des données de capteurs ESP32, de stocker ces données dans InfluxDB, et d'envoyer des commandes aux appareils via WebSocket.
 
 ### 🏗️ Architecture
 
 - **API Gateway** : Point d'entrée principal avec authentification JWT
 - **Auth Service** : Gestion des utilisateurs et authentification
 - **User Service** : Gestion des profils utilisateurs
+- **Vivarium Service** : Gestion des vivariums, capteurs et commandes
 - **Influx Service** : Gestion des données InfluxDB pour les métriques temps réel
+- **WebSocket Gateway** : Communication temps réel avec les ESP32 et applications mobiles
 - **Shared Package** : Interfaces et DTOs partagés entre services
 
 ### 🛠️ Technologies
 
 - **Framework** : NestJS 10.x
 - **Base de données** : PostgreSQL 15 avec Prisma ORM
-- **Message Broker** : RabbitMQ 3.x
 - **Base de données temps réel** : InfluxDB 2.7
+- **Communication temps réel** : WebSocket (Socket.IO)
 - **Containerisation** : Docker & Docker Compose
 - **CI/CD** : GitHub Actions
 - **Sécurité** : JWT, Helmet, Throttler
+- **Validation** : class-validator, class-transformer
 
 ## 🚀 Installation et démarrage
 
@@ -97,6 +100,32 @@ JWT_SECRET=your-secure-jwt-secret
 - **15672** : RabbitMQ Management UI
 - **8086** : InfluxDB
 
+## 🐠 Fonctionnalités Vivarium
+
+### Capteurs supportés
+- **Température** - Monitoring de la température de l'eau
+- **Humidité** - Contrôle de l'humidité ambiante
+- **Luminosité** - Gestion de l'éclairage automatique
+- **Niveau d'eau** - Surveillance du niveau d'eau
+- **pH** - Contrôle de l'acidité de l'eau
+- **CO2** - Monitoring du dioxyde de carbone
+- **Mouvement** - Détection de présence
+- **Pression** - Surveillance de la pression
+
+### Commandes disponibles
+- **Pompe** - Activation/désactivation des pompes
+- **Éclairage** - Contrôle des lumières LED
+- **Chauffage** - Gestion du système de chauffage
+- **Ventilation** - Contrôle des ventilateurs
+- **Nourrissage** - Distribution automatique de nourriture
+- **Changement d'eau** - Automatisation des changements d'eau
+
+### Communication temps réel
+- **WebSocket** pour la communication bidirectionnelle
+- **Notifications push** pour les alertes
+- **Dashboard temps réel** pour le monitoring
+- **Historique des données** avec InfluxDB
+
 ## 🧪 Tests
 
 ```bash
@@ -111,6 +140,9 @@ npm run test:cov
 
 # Tests e2e
 npm run test:e2e
+
+# Test de l'API Vivarium
+node test-vivarium-api.js
 
 # Linting
 npm run lint
@@ -205,6 +237,7 @@ docker system prune -a
 - [Guide de déploiement Docker](DOCKER_DEPLOYMENT.md)
 - [Architecture des packages](ARCHITECTURE.md)
 - [Documentation des APIs](API_DOCUMENTATION.md)
+- [**API Vivarium**](VIVARIUM_API_DOCUMENTATION.md) - Documentation complète pour les vivariums connectés
 - [Configuration des secrets GitHub](GITHUB_SECRETS_SETUP.md)
 - [Guide de sécurité](THROTTLER_SECURITY.md)
 - [Guide de test](TESTING.md)

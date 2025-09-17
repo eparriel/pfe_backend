@@ -58,13 +58,14 @@ async function bootstrap() {
 
   // Configuration Swagger
   const config = new DocumentBuilder()
-    .setTitle('PFE Backend API')
+    .setTitle('API Vivarium - PFE Backend')
     .setDescription(
-      "API backend pour le projet de fin d'études avec authentification JWT et InfluxDB",
+      "API complète pour la gestion de vivariums connectés avec ESP32. Permet de recevoir des données de capteurs, envoyer des commandes et gérer les vivariums en temps réel.",
     )
     .setVersion('1.0')
     .addTag('auth', "Endpoints d'authentification")
     .addTag('users', 'Gestion des utilisateurs')
+    .addTag('Vivarium', 'Gestion des vivariums, capteurs et commandes')
     .addTag('influx', 'Gestion des données temporelles InfluxDB')
     .addBearerAuth(
       {
@@ -79,7 +80,9 @@ async function bootstrap() {
     )
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, config, {
+    extraModels: [],
+  });
   SwaggerModule.setup('api', app, document, {
     swaggerOptions: {
       persistAuthorization: true,

@@ -339,3 +339,4 @@ docker-compose restart app
 ---
 
 **Cette documentation est mise à jour régulièrement. Consultez le README pour les dernières informations.** 🚀
+

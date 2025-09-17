@@ -203,3 +203,4 @@ cd packages/auth-service && npm run build
 ---
 
 **Cette architecture évolue avec le projet. Consultez régulièrement ce document pour les mises à jour.** 🚀
+
